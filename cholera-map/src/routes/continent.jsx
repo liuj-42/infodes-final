@@ -1,7 +1,5 @@
 
 import './Continent.css'
-
-import { useState } from 'react'
 import AfricaMap from '../components/AfricaMap'
 import ContinentStats from '../components/ContinentStats'
 

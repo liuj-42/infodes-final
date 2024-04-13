@@ -2,9 +2,12 @@
 
 .main {
     display: flex;
+    gap: 5%;
   }
   
   .main > * {
     flex-grow: 1;
+    flex-basis: 45%;
+
   }
   

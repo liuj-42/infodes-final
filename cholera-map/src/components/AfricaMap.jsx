@@ -43,21 +43,13 @@ function AfricaMap() {
     } else {
       return;
     }
-    // console.log(e.target)
-    let svg = e.target;
-    let surroundingRect = svg.getBoundingClientRect();
-    let center = [surroundingRect.left + surroundingRect.width / 2, surroundingRect.top + surroundingRect.height / 2]
-    // console.log(`hovered on ${feature.properties.ADM0_NAME}`)
-    let coords = [e.clientX, e.clientY]
-    // console.log(coords)
-    // console.log(center)
+
     console.log(feature)
     const ISO3 = feature.properties.ISO3;
     console.log(outbreaks[ISO3])
 
     document.getElementById("country-label").innerHTML = `
     <div>
-      <h1>Country label</h1>
       <h2>${feature.properties.ADM0_NAME} (${ISO3})</h2>
       <h3>Population: 123</h3>
       <h3>Cholera cases: 123</h3>
@@ -127,13 +119,9 @@ function AfricaMap() {
                               : "#808080"
                           }
                           className="country"
+                          id={`countryshape-${feature.properties.ISO3}`}
                           onMouseEnter={(e) => handleMouseEnter(e, feature)}
                           onMouseLeave={(e) => handleMouseLeave(e, feature)}
-                          // onMouseMove = {(e) => console.log("test")}
-                          // onMouseOut = {() => hideTooltip()}
-                          // onMouseEnter={(e) => {console.log("test"); changeColor(e)}}
-                          // onMouseMove={() => e => this.handleMouseOverBar(e, feature)}
-                          // onMouseOut={hideTooltip}
                           onClick={() =>
                             console.log(
                               `clicked on ${feature.properties.ADM0_NAME}`
