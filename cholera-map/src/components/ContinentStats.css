@@ -6,8 +6,11 @@
   padding: 1rem;
   background-color: #fff;
   height: 100%;
+  max-height: 80vh;
   border-radius: 0.5rem;
   box-shadow: 0 0 0.5rem 0.5rem rgba(0, 0, 0, 0.1);
+
+  width: 40vw;
 }
 
 .continent-stats h1 {
@@ -16,13 +19,13 @@
 
 .continent-stats-svg {
   margin: 0 3rem;
-  outline: 1px solid green;
+  /* outline: 1px solid green; */
 }
 
 #country-label {
   width: fit-content;
   font-size: 1rem;
   font-weight: 500;
-  margin: 1.5rem 3rem;
+  margin: 1rem 3rem;
 
 }

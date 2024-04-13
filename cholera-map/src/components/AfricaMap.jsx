@@ -2,6 +2,8 @@
 import { useTooltip, useTooltipInPortal, TooltipWithBounds, withTooltip } from '@visx/tooltip';
 import { localPoint } from '@visx/event';
 
+import { useNavigate } from 'react-router-dom';
+
 import { Fragment } from 'react';
 import { Zoom } from '@visx/zoom';
 import { Mercator } from '@visx/geo';
@@ -22,7 +24,6 @@ const africa = topojson.feature(topology, topology.objects.afr_g2014_2013_0);
 import "./AfricaMap.css";
 
 
-
 const scope = ['BEN', 'ETH', 'GHA', 'COG', 'CMR', 'MOZ', 'MWI', 'TZA', 'GIN', 'SOM', 'TCD', 'NER', 'TZA', 'CIV', 'NGA', 'ZWE', 'ZMB', 'COD', 'GNB', 'SLE', 'SSD', 'AGO', 'UGA', 'KEN', 'NAM', 'MLI']
 
 const convertVhToPx = (vh=50) => {
@@ -37,6 +38,9 @@ const convertVwToPx = (vw=50) => {
 
 
 function AfricaMap() {
+
+  const navigate = useNavigate();
+
   function handleMouseEnter(e, feature) {
     if (scope.includes(feature.properties.ISO3)) {
       e.target.style.fill = "#FFF";
@@ -71,7 +75,7 @@ function AfricaMap() {
   }
 
   const width = 40 * convertVwToPx(100) / 100;
-  const height = 1.25 * width;
+  const height = 80 * convertVhToPx(100) / 100;
 
 
   return (
@@ -92,8 +96,8 @@ function AfricaMap() {
             id="africa-map"
             >
             <svg 
-              height={height} 
               width={width}
+              height={height}
               style={{ cursor: zoom.isDragging ? 'grabbing' : 'grab', touchAction: 'none' }}
               ref={zoom.containerRef}
             >
@@ -123,9 +127,11 @@ function AfricaMap() {
                           onMouseEnter={(e) => handleMouseEnter(e, feature)}
                           onMouseLeave={(e) => handleMouseLeave(e, feature)}
                           onClick={() =>
-                            console.log(
+                            {console.log(
                               `clicked on ${feature.properties.ADM0_NAME}`
-                            )
+                            );
+                            navigate(`/countries/${feature.properties.ISO3}`)
+                          }
                           }
                         />
                       </Fragment>

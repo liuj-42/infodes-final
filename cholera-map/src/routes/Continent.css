@@ -1,13 +1,13 @@
 
 
 .main {
-    display: flex;
-    gap: 5%;
-  }
-  
-  .main > * {
-    flex-grow: 1;
-    flex-basis: 45%;
+  display: flex;
+  gap: 5%;
+  width: 90vw;
+  margin: 0 auto;
+}
 
-  }
+.main > * {
+  flex-basis: 45%;
+}
   
