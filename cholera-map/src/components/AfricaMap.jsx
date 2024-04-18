@@ -1,152 +1,158 @@
-
-import { useTooltip, useTooltipInPortal, TooltipWithBounds, withTooltip } from '@visx/tooltip';
-import { localPoint } from '@visx/event';
-
+import DeckGL from "@deck.gl/react";
+import { GeoJsonLayer } from "@deck.gl/layers";
+import { useState } from "react";
+import geojsonData from "../assets/afr_g2014_2013_0.json";
 import { useNavigate } from 'react-router-dom';
 
-import { Fragment } from 'react';
-import { Zoom } from '@visx/zoom';
-import { Mercator } from '@visx/geo';
-// import topology from "../public/whole_africa.json";
-// import topology from "../../public/whole_africa_simplified.json";
-import topology from "../assets/whole_africa_simplified.json";
-// import topology from "../public/countries.json";
-import * as topojson from "topojson-client";
+const scope = [
+  "BEN",
+  "ETH",
+  "GHA",
+  "COG",
+  "CMR",
+  "MOZ",
+  "MWI",
+  "TZA",
+  "GIN",
+  "SOM",
+  "TCD",
+  "NER",
+  "TZA",
+  "CIV",
+  "NGA",
+  "ZWE",
+  "ZMB",
+  "COD",
+  "GNB",
+  "SLE",
+  "SSD",
+  "AGO",
+  "UGA",
+  "KEN",
+  "NAM",
+  "MLI",
+];
 
-import {outbreaks} from "../../public/outbreaks.json"
-// console.log("outbreaks:")
-// console.log(outbreaks)
-
-const africa = topojson.feature(topology, topology.objects.afr_g2014_2013_0);
-// const africa = topojson.feature(topology, topology.objects.country_shps);
-
+import { outbreaks } from "../../public/outbreaks.json";
 
 import "./AfricaMap.css";
+// #f3e79b,#fac484,#f8a07e,#eb7f86,#ce6693,#a059a0,#5c53a5
+const colors = [
+  [243, 231, 155],
+  [250, 196, 132],
+  [248, 160, 126],
+  [235, 127, 134],
+  [206, 102, 147],
+  [160, 89, 160],
+  [92, 83, 165],
+];
 
-
-const scope = ['BEN', 'ETH', 'GHA', 'COG', 'CMR', 'MOZ', 'MWI', 'TZA', 'GIN', 'SOM', 'TCD', 'NER', 'TZA', 'CIV', 'NGA', 'ZWE', 'ZMB', 'COD', 'GNB', 'SLE', 'SSD', 'AGO', 'UGA', 'KEN', 'NAM', 'MLI']
-
-const convertVhToPx = (vh=50) => {
-  const oneVhInPx = window.innerHeight / 100;
-  return oneVhInPx * vh;
-};
-
-const convertVwToPx = (vw=50) => {
-  const oneVhInPx = window.innerWidth / 100;
-  return oneVhInPx * vw;
-};
-
+// every 70 cases we go up a color
+function getColor(numCases) {
+  return colors[Math.floor(numCases / 45)];
+}
 
 function AfricaMap() {
-
+  const [hoverInfo, setHoverInfo] = useState(null);
   const navigate = useNavigate();
 
-  function handleMouseEnter(e, feature) {
-    if (scope.includes(feature.properties.ISO3)) {
-      e.target.style.fill = "#FFF";
-    } else {
-      return;
-    }
+  const layer = new GeoJsonLayer({
+    id: "GeoJsonLayer",
+    data: geojsonData,
+    stroked: true,
+    filled: true,
+    pickable: true,
+    getFillColor: (f) => {
+      // Use the feature's properties to generate a color
+      if (scope.includes(f.properties.ISO3)) {
+        // scale the colors based on number of total outbreaks
+        const totalOutbreaks = outbreaks[f.properties.ISO3].length;
+        return getColor(totalOutbreaks);
+        // return [255, 255, 255];
+      } else {
+        // return [58, 59, 60]
+        return [204, 204, 204];
+      }
+    },
+    getLineColor: [128, 128, 128],
+    lineWidthMinPixels: 1,
+    onHover: (info) => setHoverInfo(info),
+    onClick: (info) => (scope.includes(info.object.properties.ISO3) ? navigate(`/countries/${info.object.properties.ISO3}`) : null),
+  });
 
-    console.log(feature)
-    const ISO3 = feature.properties.ISO3;
-    console.log(outbreaks[ISO3])
+  const hoverLayer =
+    hoverInfo?.object &&
+    new GeoJsonLayer({
+      id: "HoverLayer",
+      data: hoverInfo.object,
+      stroked: true,
+      filled: false,
+      getLineColor: [58, 59, 60],
+      lineWidthMinPixels: 2,
+    });
 
-    document.getElementById("country-label").innerHTML = `
-    <div>
-      <h2>${feature.properties.ADM0_NAME} (${ISO3})</h2>
-      <h3>Population: 123</h3>
-      <h3>Cholera cases: 123</h3>
-      <h3>Cholera outbreaks: ${outbreaks[ISO3].length} </h3>
-    </div>
-    `
-
-  }
-
-  function handleMouseLeave(e, feature) {
-    // console.log(e.target)
-    if (scope.includes(feature.properties.ISO3)) {
-      e.target.style.fill = "#fc2e1c"
-    } else {
-      e.target.style.fill = "#808080"
-    }
-    // e.target.style.fill = "#fc2e1c"
-    // setTooltipData(null)
-  }
-
-  const width = 40 * convertVwToPx(100) / 100;
-  const height = 80 * convertVhToPx(100) / 100;
-
+  const INITIAL_VIEW_STATE = {
+    longitude: 17.6,
+    latitude: -1.3,
+    zoom: 2,
+    pitch: 0,
+    bearing: 0,
+  };
 
   return (
-    <>
-      <Zoom
-        width={width}
-        height={height}
-        scaleXMin={1 / 2}
-        scaleXMax={4}
-        scaleYMin={1 / 2}
-        scaleYMax={4}
-        style={{"border": "1px solid red"}}
-      >
-        {zoom => (
-          <div 
-            width={width}
-            height={height}
-            id="africa-map"
-            >
-            <svg 
-              width={width}
-              height={height}
-              style={{ cursor: zoom.isDragging ? 'grabbing' : 'grab', touchAction: 'none' }}
-              ref={zoom.containerRef}
-            >
-              <Mercator
-                data={africa.features}
-                fitSize={[[width, height - 40], africa]}
-              >
-                {(mercator) => (
-                  <g width={width} height={height} transform={zoom.toString()}>
-                    {mercator.features.map(({ feature, path }, i) => (
-                      <Fragment key={`map-feature-${i}`}>
-                        <path
-                          style={{
-                            cursor: scope.includes(feature.properties.ISO3)
-                              ? "#pointer"
-                              : "default",
-                          }}
-                          d={path || ""}
-                          // fill="#fc2e1c"
-                          fill={
-                            scope.includes(feature.properties.ISO3)
-                              ? "#fc2e1c"
-                              : "#808080"
-                          }
-                          className="country"
-                          id={`countryshape-${feature.properties.ISO3}`}
-                          onMouseEnter={(e) => handleMouseEnter(e, feature)}
-                          onMouseLeave={(e) => handleMouseLeave(e, feature)}
-                          onClick={() =>
-                            {console.log(
-                              `clicked on ${feature.properties.ADM0_NAME}`
-                            );
-                            navigate(`/countries/${feature.properties.ISO3}`)
-                          }
-                          }
-                        />
-                      </Fragment>
-                    ))}
-                  </g>
-                )}
-              </Mercator>
-            </svg> 
+    <div 
+      style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}
+      id="map-container"
+    >
+      <DeckGL
+        width="50%"
+        height="100%"
+        initialViewState={INITIAL_VIEW_STATE}
+        controller={true}
+        layers={[layer, hoverLayer].filter(Boolean)}
+        container="map-container"
+        style={{ position: "absolute", right: 0 }}
+      />
+      {hoverInfo && hoverInfo.object && (
+        <div
+          style={{
+            position: "absolute",
+            zIndex: 1,
+            pointerEvents: "none",
+            left: hoverInfo.x,
+            top: hoverInfo.y,
+          }}
+        >
+          <div
+            style={{
+              background: "white",
+              padding: "4px",
+              border: "1px solid #ccc",
+            }}
+          >
+            <h2>
+              {hoverInfo.object.properties.ADM0_NAME} (
+              {hoverInfo.object.properties.ISO3})
+            </h2>
+            {scope.includes(hoverInfo.object.properties.ISO3) ? (
+              <>
+                <h3>Population: 123</h3>
+                <h3>Cholera cases: 123</h3>
+                <h3>
+                  Cholera outbreaks:{" "}
+                  {outbreaks[hoverInfo.object.properties.ISO3].length}{" "}
+                </h3>
+              </>
+            ) : (
+              <>
+                <h3>No data available</h3>
+              </>
+            )}
           </div>
-        )}
-
-      </Zoom>
-    </>
+        </div>
+      )}
+    </div>
   );
-
 }
 
 export default AfricaMap;

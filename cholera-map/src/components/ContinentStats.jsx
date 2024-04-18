@@ -55,8 +55,7 @@ function ContinentStats() {
   )
 
   function handleMouseEnter(e, ISO3) {
-    e.target.style.fill = "#FFF";
-    document.getElementById(`countryshape-${ISO3}`).style.fill = "#FFF";
+    e.target.style.fill = "#fc2e1c";
     document.getElementById("country-label").innerHTML = `
     <div>
       <h2>${mappings[ISO3]} (${ISO3})</h2>
@@ -69,8 +68,6 @@ function ContinentStats() {
 
   function handleMouseLeave(e, feature) {
     e.target.style.fill = "rgba(233, 75, 59, .5)"
-    document.getElementById(`countryshape-${feature}`).style.fill = "#fc2e1c";
-
   }
 
   return (
