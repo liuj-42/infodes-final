@@ -72,75 +72,83 @@ function ContinentStats() {
 
   return (
 
-    <div
-      className="continent-stats"
-    >
-      <h1>Top 5 countries with most cholera outbreaks</h1>
-      <svg 
-        width={height+50} 
-        height={width}
-        className="continent-stats-svg"
-      >
-        <Group>
-
-          {topCountries.map((d) => {
-            const country = getCountry(d);
-            const barHeight = xScale.bandwidth();
-            const barWidth = yMax - (yScale(getCountryOutbreaks(d)) ?? 0);
-
-            const barY = xScale(country);
-            const barX = 75;
-            return (
-              <Fragment key={d.country}>
-                <Bar
-                  x={barX}
-                  y={barY}
-                  width={barWidth}
-                  height={barHeight}
-                  fill="rgba(233, 75, 59, .5)"
-                  onMouseEnter={(e)=>{handleMouseEnter(e, d.country)}}
-                  onMouseLeave={(e)=>{handleMouseLeave(e, d.country)}}
-                  rx={8}
-                />
-                <Text
-                  x={barX -5} // Adjust this value as needed
-                  y={barY + barHeight / 2}
-                  verticalAnchor="middle"
-                  textAnchor='end'
-                  
-                >
-                  {country}
-                </Text>
-                <Text
-                  x={barX + barWidth + 5} // Position the label at the end of the bar
-                  y={barY + barHeight / 2}
-                  verticalAnchor="middle"
-                  textAnchor="start" // Align the text to the start, i.e., left
-                  
-                >
-                  {getCountryOutbreaks(d)} 
-                </Text>
-              </Fragment>
-            );
-          })}
-        </Group>
-        <Text
-          x={0}
-          y={0}
-          dx={10} // Adjust this value as needed
-          dy={220} // Adjust this value as needed
-          verticalAnchor="start"
-          textAnchor="start"
-          transform="rotate(-90)"
-          
-        >
-          Country Abbreviation
-        </Text>
-
-      </svg>
-      <hr style={{"width": "100%"}}/>
-      <div id="country-label"></div>
+    <div className="continent-stats">
+      <p>Total cholera cases: {123}</p>
+      <p>Total cholera outbreaks: {123}</p>
+      <p>Country with the most outbreaks: {"yeah (YEA)"}</p>
+      <p>Countries with data: {123}</p>
+      
+      
     </div>
+    // <div
+    //   className="continent-stats"
+    // >
+    //   <h1>Top 5 countries with most cholera outbreaks</h1>
+    //   <svg 
+    //     width={height+50} 
+    //     height={width}
+    //     className="continent-stats-svg"
+    //   >
+    //     <Group>
+
+    //       {topCountries.map((d) => {
+    //         const country = getCountry(d);
+    //         const barHeight = xScale.bandwidth();
+    //         const barWidth = yMax - (yScale(getCountryOutbreaks(d)) ?? 0);
+
+    //         const barY = xScale(country);
+    //         const barX = 75;
+    //         return (
+    //           <Fragment key={d.country}>
+    //             <Bar
+    //               x={barX}
+    //               y={barY}
+    //               width={barWidth}
+    //               height={barHeight}
+    //               fill="rgba(233, 75, 59, .5)"
+    //               onMouseEnter={(e)=>{handleMouseEnter(e, d.country)}}
+    //               onMouseLeave={(e)=>{handleMouseLeave(e, d.country)}}
+    //               rx={8}
+    //             />
+    //             <Text
+    //               x={barX -5} // Adjust this value as needed
+    //               y={barY + barHeight / 2}
+    //               verticalAnchor="middle"
+    //               textAnchor='end'
+                  
+    //             >
+    //               {country}
+    //             </Text>
+    //             <Text
+    //               x={barX + barWidth + 5} // Position the label at the end of the bar
+    //               y={barY + barHeight / 2}
+    //               verticalAnchor="middle"
+    //               textAnchor="start" // Align the text to the start, i.e., left
+                  
+    //             >
+    //               {getCountryOutbreaks(d)} 
+    //             </Text>
+    //           </Fragment>
+    //         );
+    //       })}
+    //     </Group>
+    //     <Text
+    //       x={0}
+    //       y={0}
+    //       dx={10} // Adjust this value as needed
+    //       dy={220} // Adjust this value as needed
+    //       verticalAnchor="start"
+    //       textAnchor="start"
+    //       transform="rotate(-90)"
+          
+    //     >
+    //       Country Abbreviation
+    //     </Text>
+
+    //   </svg>
+    //   <hr style={{"width": "100%"}}/>
+    //   <div id="country-label"></div>
+    // </div>
   );
 
 }

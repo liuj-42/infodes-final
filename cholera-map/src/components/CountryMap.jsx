@@ -7,8 +7,11 @@ import geojsonData from "../assets/afr_g2014_2013_0.json";
 
 import * as turf from "@turf/turf"
 
-import outbreaks from "../../public/outbreaks.json";
+// import outbreaks from "../../public/outbreaks.json";
 
+import { useAtom } from 'jotai';
+import { outbreakAtom } from '../state/state';
+import ExponentialLegend from './ExponentialLegend';
 
 // #fcde9c,#faa476,#f0746e,#e34f6f,#dc3977,#b9257a,#7c1d6f
 const colors = [
@@ -23,22 +26,31 @@ const colors = [
 
 
 
-function CountryMap() {
+function CountryMap({country}) {
+  const [outbreaks,] = useAtom(outbreakAtom);
+  console.log(outbreaks)
   const navigate = useNavigate();
 
-  let location = useLocation();
+  // let location = useLocation();
+  // let country = location.pathname.split("/")[2];
 
-  let country = location.pathname.split("/")[2];
-  const countryOutbreaks = outbreaks["outbreaks"][country]
+
+  const countryOutbreaks = outbreaks[country]
   console.log(countryOutbreaks)
 
-  let maxCases = Math.max(...countryOutbreaks.map((d) => d.total_suspected_cases));
+  countryOutbreaks.sort((a, b) => b.total_suspected_cases - a.total_suspected_cases)
+  console.log(countryOutbreaks)
 
-  // every 70 cases we go up a color
+  const maxCases = countryOutbreaks[0].total_suspected_cases
+
   function getColor(numCases) {
-    // console.log(numCases)
-    // console.log(colors[Math.floor(numCases/400)])
     return colors[Math.floor(numCases / Math.ceil(maxCases/7))];
+  }
+
+  function getRadius(cases) {
+    // base this off of the max cases
+    // max size should be 100000 px
+    return cases / maxCases * 100000
   }
 
 
@@ -51,7 +63,6 @@ function CountryMap() {
 
   // #e4f1e1,#b4d9cc,#89c0b6,#63a6a0,#448c8a,#287274,#0d585f
 
-  console.log(country)
   const layer = new GeoJsonLayer({
     id: 'geojson-layer',
     data: countryGeoJson,
@@ -67,19 +78,19 @@ function CountryMap() {
     id: 'scatterplot-layer',
     data: countryOutbreaks,
     pickable: true,
-    opacity: 0.5,
-    // stroked: true,
+    opacity: 0.25,
     filled: true,
     radiusScale: 6,
     radiusMinPixels: 5,
-    // radiusMaxPixels: 100,
+    // radiusMaxPixels: 10000,
     lineWidthMinPixels: 1,
     getPosition: d => [d.longitude, d.latitude],
-    getRadius: d => d.total_suspected_cases * 10,
+    getRadius: d => getRadius(d.total_suspected_cases),
     getFillColor: d => getColor(d.total_suspected_cases),
     onClick: (info) => {
       console.log(info.object.total_suspected_cases)
       console.log(info)
+      // navigate to outbreak page
     },
     
     
@@ -89,8 +100,7 @@ function CountryMap() {
   return (
     <div>
       <h1>Country {country}</h1>
-      <button onClick={() => navigate("/")} style={{"zIndex": 2, "position": "absolute"
-    }}>Back</button>
+
       <DeckGL
         initialViewState={{longitude, latitude, zoom: 4}}
         controller={true}
@@ -99,6 +109,7 @@ function CountryMap() {
         height="80%"
         style={{"border": "1px solid red", "top": "10%", "left": "50%"}}
         />
+        <ExponentialLegend colors={colors} max={maxCases} units="cases"/>
     </div>
   )
 

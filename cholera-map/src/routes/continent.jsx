@@ -10,8 +10,8 @@ function Continent() {
   return (
     <>
       <div className="main">
-        <AfricaMap/>
         <ContinentStats/>
+        <AfricaMap/>
       </div>
 
     </>

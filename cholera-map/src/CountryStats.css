@@ -1,0 +1,88 @@
+#outbreaks-sidebar {
+  max-height: 80vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  width: 40vw;
+  margin-left: 5vw;
+  box-sizing: border-box;
+  padding: 1%;
+  background-color: #fff;
+
+  border-radius: 16px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.1);
+}
+
+#outbreaks-filter {
+  display: flex;
+}
+
+#filter-title {
+  font-size: 1.25rem;
+  margin: 0 0 0 15px;
+
+}
+
+#filter-button {
+  padding: 5px;
+  border-radius: 8px;
+  background-color: #fff;
+  border: 1px solid #000;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+
+#outbreaks-filter > button:hover {
+  background-color: #f0f0f0;
+}
+
+#filter-dropdown { 
+  display:none;
+}
+
+.show {
+  display: block !important; 
+}
+
+.outbreak-card {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 5px;
+  background-color: rgba(128, 128, 128, 25%);
+  border-radius: 8px;
+  margin-right: -20px;
+}
+
+
+.outbreak-card:hover {
+  background-color: rgba(128, 128, 128, 50%);
+  cursor: pointer;
+}
+
+.outbreak-card > div {
+  margin: 0;
+}
+
+
+.outbreak-card > div > p {
+  margin-left: 15px;
+}
+
+
+.card-top {
+  display: flex;
+  font-size: 1.25rem;
+  align-items: center;
+
+
+}
+
+.card-top h3, .card-top p {
+  margin: 15px;
+}
