@@ -44,7 +44,9 @@ function CountryMap({country}) {
   const maxCases = countryOutbreaks[0].total_suspected_cases
 
   function getColor(numCases) {
-    return colors[Math.floor(numCases / Math.ceil(maxCases/7))];
+    const a = Math.sqrt(maxCases + 1);
+    const b = Math.sqrt(numCases);
+    return colors[Math.floor(b / a * 7)];
   }
 
   function getRadius(cases) {
